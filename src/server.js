@@ -1,24 +1,42 @@
-const Express = require('express');
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
+const sdk = require('v1sdk');
+const axios = require('axios');
 
-const server = new Express();
+const server = new express();
+const indexContents = fs.readFileSync(
+  path.join(__dirname, '..', 'build', 'index.html'),
+  'utf8',
+);
+const token = process.env.TOKEN;
+const v1 = sdk
+  .axiosConnector(axios)(sdk.default)(
+    'www7.v1host.com',
+    'V1Production',
+    443,
+    true,
+  )
+  .withAccessToken(token);
 
+server.use(express.static(path.join(__dirname, '..', 'build')));
 server.get('/', (req, res) => {
-  res.send(`<!DOCTYPE html>
-  <html lang="en">
-	<head>
-	  <meta charset="utf-8" />
-	  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-	  <meta
-		name="viewport"
-		content="width=device-width, initial-scale=1, shrink-to-fit=no"
-	  />
-	  <meta name="theme-color" content="#000000" />
-	  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-	  <title>Grooming Planning</title>
-	</head>
-	<body>
-	  <noscript>You need to enable JavaScript to run this app.</noscript>
-	  <div id="root"></div>
-	</body>
-  </html>`);
+  res.send(`${indexContents}`);
 });
+
+server.get('/api', (req, res) => {
+  v1.query({
+    from: 'Epic',
+    select: ['Name', 'Number', 'AssetType', 'Swag', 'Value'],
+    filter: ["TaggedWith='groom'"],
+  })
+    .then(items => {
+      res.send(items.data);
+    })
+    .catch(e => {
+      console.log(e);
+      res.send('error');
+    });
+});
+
+server.listen(9000);

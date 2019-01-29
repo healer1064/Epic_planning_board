@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import './App.css';
 import Board from './Board';
+import axios from 'axios';
 
 const styles = theme => ({
   app: {
@@ -27,12 +28,28 @@ const styles = theme => ({
 });
 
 class App extends Component {
-  handleClose = () => {
-    this.setState({ isDrawerOpen: false });
-  };
-
+  constructor(props) {
+    super();
+    this.state = {
+      items: [],
+    };
+  }
+  componentDidMount() {
+    axios.get('/api').then(resp =>
+      this.setState({
+        items: resp.data[0].map(wi => ({
+          _oid: wi._oid,
+          title: wi.Number,
+          summary: wi.Name,
+          importance: wi.Value || 0,
+          difficulty: wi.Swag || 0,
+        })),
+      }),
+    );
+  }
   render() {
-    const { classes, items } = this.props;
+    const { classes } = this.props;
+    const { items } = this.state;
 
     return (
       <div className={classNames(classes.app, 'App')}>
@@ -41,36 +58,4 @@ class App extends Component {
     );
   }
 }
-App.defaultProps = {
-  items: [
-    {
-      _oid: 'Epic:123456',
-      title: 'E-1',
-      summary: 'This is an epic name',
-      importance: 75,
-      difficulty: 13,
-    },
-    {
-      _oid: 'Epic:123456',
-      title: 'E-2',
-      summary: 'This is an epic name',
-      importance: 40,
-      difficulty: 2,
-    },
-    {
-      _oid: 'Epic:123456',
-      title: 'E-3',
-      summary: 'This is an epic name',
-      importance: 25,
-      difficulty: 13,
-    },
-    {
-      _oid: 'Epic:123456',
-      title: 'E-4',
-      summary: 'This is an epic name',
-      importance: 60,
-      difficulty: 7,
-    },
-  ],
-};
 export default withStyles(styles)(App);

@@ -22,6 +22,17 @@ const styles = {
     height: `50%`,
     width: `50%`,
   },
+  importance: {
+    position: 'absolute',
+    bottom: 0 - margin,
+    right: 0,
+  },
+  difficulty: {
+    position: 'absolute',
+    top: 0,
+    left: 0 - margin - 16,
+    transform: 'rotate(270deg)',
+  },
   list: {
     position: 'absolute',
     margin: 0,
@@ -35,25 +46,28 @@ const styles = {
     position: 'absolute',
     listStyle: 'none',
     display: 'inline-block',
-    background: 'rgba(0, 0, 0, 0.125)',
-    border: '1px solid rgba(0, 0, 0, 0.5)',
-    borderRadius: '0 4px 4px',
-    padding: 4,
-    fontWeight: '600',
   },
-  itemText: {},
+  itemText: {
+    display: 'block',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    background: 'rgba(190, 144, 212, .5)',
+    border: '1px solid rgba(115, 101, 152, 1)',
+  },
 };
 
 export default withStyles(styles)(({ classes, items }) => {
   const difficultyValues = items.map(i => i.difficulty);
-  const maxDifficulty = max(difficultyValues);
-  const maxImportance = 100;
-
+  const maxDifficulty = max(difficultyValues) + 3 || 13;
+  const maxImportance = 110;
   return (
     <div className={cn(classes.root)}>
       <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)} />
       <div style={{ top: '50%', left: 0 }} className={cn(classes.quadrant)} />
       <div style={{ top: 0, left: '50%' }} className={cn(classes.quadrant)} />
+      <h1 className={classes.importance}>Importance</h1>
+      <h1 className={classes.difficulty}>Difficulty</h1>
       <div
         style={{
           top: '50%',
@@ -63,23 +77,18 @@ export default withStyles(styles)(({ classes, items }) => {
       />
       <ul className={cn(classes.list)}>
         {items.map(item => {
+          console.log(
+            item.title,
+            `calc((100% / ${maxDifficulty}) * ${item.difficulty})`,
+          );
+
           const style = {};
-          if (item.difficulty > maxDifficulty / 2) {
-            style.right = `calc((100% / ${maxDifficulty} * ${maxDifficulty -
-              item.difficulty}))`;
-          } else {
-            style.left = `calc((100% / ${maxDifficulty} * ${item.difficulty}))`;
-          }
-          if (item.importance > 50) {
-            style.bottom = `calc((100% / ${maxImportance} * ${100 -
-              item.importance}))`;
-          } else {
-            style.top = `calc((100% / ${maxImportance} * ${item.importance}))`;
-          }
+          style.bottom = `calc((100% / ${maxDifficulty}) * ${item.difficulty})`;
+          style.left = `calc((100% / ${maxImportance}) * ${item.importance})`;
           return (
             <li className={classes.listItem} key={item._oid} style={style}>
-              <Tooltip title={item.summary}>
-                <span className={classes.itemText}>{item.title}</span>
+              <Tooltip title={`${item.title} - ${item.summary}`}>
+                <span className={classes.itemText} />
               </Tooltip>
             </li>
           );
