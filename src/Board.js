@@ -49,11 +49,10 @@ const styles = {
   },
   itemText: {
     display: 'block',
-    width: 12,
-    height: 12,
     borderRadius: 6,
     background: 'rgba(190, 144, 212, .5)',
     border: '1px solid rgba(115, 101, 152, 1)',
+    padding: 2,
   },
 };
 
@@ -63,36 +62,34 @@ export default withStyles(styles)(({ classes, items }) => {
   const maxImportance = 110;
   return (
     <div className={cn(classes.root)}>
-      <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)} />
-      <div style={{ top: '50%', left: 0 }} className={cn(classes.quadrant)} />
-      <div style={{ top: 0, left: '50%' }} className={cn(classes.quadrant)} />
       <h1 className={classes.importance}>Importance</h1>
       <h1 className={classes.difficulty}>Difficulty</h1>
+      <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)}><h3>Ignore for Now?</h3></div>
+      <div style={{ top: '50%', left: 0 }} className={cn(classes.quadrant)} ><h3>Improve when Able</h3></div>
+      <div style={{ top: 0, left: '50%' }} className={cn(classes.quadrant)}><h3>Breakdown and Plan</h3></div>
       <div
         style={{
           top: '50%',
           left: '50%',
         }}
         className={cn(classes.quadrant)}
-      />
+        >
+      <h3>Quick Wins</h3></div>
       <ul className={cn(classes.list)}>
-        {items.map(item => {
-          console.log(
-            item.title,
-            `calc((100% / ${maxDifficulty}) * ${item.difficulty})`,
-          );
+        {items.map(item => (
+            <li className={classes.listItem} key={item._oid} style={{
+                bottom : `calc((100% / ${maxDifficulty}) * ${item.difficulty})`,
+                left: `calc((100% / ${maxImportance}) * ${item.importance})`,
+                cursor: 'default',
+              }}>
 
-          const style = {};
-          style.bottom = `calc((100% / ${maxDifficulty}) * ${item.difficulty})`;
-          style.left = `calc((100% / ${maxImportance}) * ${item.importance})`;
-          return (
-            <li className={classes.listItem} key={item._oid} style={style}>
-              <Tooltip title={`${item.title} - ${item.summary}`}>
-                <span className={classes.itemText} />
-              </Tooltip>
+                <div>
+                  <Tooltip title={item.summary}>
+                    <span className={classes.itemText}>{item.title}</span>
+                  </Tooltip>
+                </div>
             </li>
-          );
-        })}
+        ))}
       </ul>
     </div>
   );
