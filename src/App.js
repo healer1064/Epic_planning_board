@@ -1,25 +1,25 @@
 import axios from 'axios';
-import classNames from 'classnames';
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Board from './Board';
-import Legend from './Legend';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import { navigate, Router } from '@reach/router';
+import Importance from './Importance';
+import Results from './Results';
 import './App.css';
 
-const styles = theme => ({
-  app: {
-    overflow: 'hidden',
-    display: 'flex',
-  },
-});
-
 class App extends Component {
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
       items: [],
       selected: null,
+      tabIndex: 0,
     };
+    this.tabs = [
+      { label: 'Rate Importance', href: '/importance' },
+      { label: 'Rate Difficulty', href: '/difficulty' },
+      { label: 'Results', href: '/results' },
+    ];
   }
   componentDidMount() {
     axios.get('/api').then(resp =>
@@ -34,32 +34,31 @@ class App extends Component {
       }),
     );
   }
+
+  handleNavigateTab = (evt, tabIndex) => {
+    this.setState({ tabIndex }, () => {
+      navigate(this.tabs[tabIndex].href);
+    });
+  };
+
   render() {
-    const { classes } = this.props;
-    const { items, selected } = this.state;
+    const { items, tabIndex } = this.state;
 
     return (
-      <div className={classNames(classes.app, 'App')}>
-        <Legend
-          items={items}
-          onSelect={(evt, _oid) =>
-            this.setState(state => ({
-              selected: state.selected !== _oid ? _oid : null,
-            }))
-          }
-          selected={selected}
-        />
-        <Board
-          items={items}
-          onSelect={(evt, _oid) =>
-            this.setState(state => ({
-              selected: state.selected !== _oid ? _oid : null,
-            }))
-          }
-          selected={selected}
-        />
+      <div>
+        <Tabs value={tabIndex} onChange={this.handleNavigateTab}>
+          {this.tabs.map(({ href, label }) => (
+            <Tab key={href} label={label} />
+          ))}
+        </Tabs>
+        <div>
+          <Router>
+            <Importance path="/importance" items={items} />
+            <Results path="/results" items={items} />
+          </Router>
+        </div>
       </div>
     );
   }
 }
-export default withStyles(styles)(App);
+export default App;
