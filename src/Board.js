@@ -44,26 +44,37 @@ const styles = {
     right: 0,
     bottom: 0,
   },
+  selected: {
+    zIndex: '1000 !important',
+    background: 'rgba(190, 144, 212, 1) !important',
+  },
+  notSelected: {
+    background: 'lightgray !important',
+    color: 'gray',
+  },
   listItem: {
+    cursor: 'pointer',
     position: 'absolute',
     listStyle: 'none',
     display: 'inline-block',
-  },
-  itemText: {
-    display: 'block',
+    zIndex: 1,
     borderRadius: 6,
     background: 'rgba(190, 144, 212, .5)',
     border: '1px solid rgba(115, 101, 152, 1)',
+  },
+  itemText: {
+    display: 'block',
+
     padding: 2,
   },
 };
 
-export default withStyles(styles)(({ classes, items }) => {
+export default withStyles(styles)(({ classes, items, onSelect, selected }) => {
   const difficultyValues = items.map(i => i.difficulty);
   const maxDifficulty = max(difficultyValues) + 3 || 13;
   const maxImportance = 110;
   return (
-    <div className={cn(classes.root)}>
+    <div className={cn(classes.root)} onClick={evt => onSelect(evt, null)}>
       <h1 className={classes.importance}>Importance</h1>
       <h1 className={classes.difficulty}>Difficulty</h1>
       <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)}>
@@ -87,12 +98,21 @@ export default withStyles(styles)(({ classes, items }) => {
       <ul className={cn(classes.list)}>
         {items.map(item => (
           <li
-            className={classes.listItem}
+            className={cn(
+              classes.listItem,
+              item._oid === selected && classes.selected,
+              selected !== null &&
+                item._oid !== selected &&
+                classes.notSelected,
+            )}
             key={item._oid}
             style={{
               bottom: `calc((100% / ${maxDifficulty}) * ${item.difficulty})`,
               left: `calc((100% / ${maxImportance}) * ${item.importance})`,
-              cursor: 'default',
+            }}
+            onClick={evt => {
+              evt.stopPropagation();
+              onSelect(evt, item._oid);
             }}
           >
             <div>

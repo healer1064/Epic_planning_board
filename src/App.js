@@ -1,29 +1,15 @@
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import './App.css';
-import Board from './Board';
 import axios from 'axios';
+import classNames from 'classnames';
+import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Board from './Board';
+import Legend from './Legend';
+import './App.css';
 
 const styles = theme => ({
   app: {
     overflow: 'hidden',
-  },
-  drawerRoot: {
     display: 'flex',
-    flexDirection: 'column',
-    margin: 8,
-    width: 400,
-  },
-  margin: {
-    margin: theme.spacing.unit,
-  },
-  withoutLabel: {
-    marginTop: theme.spacing.unit * 3,
-  },
-  textField: {
-    flex: 1,
-    flexBasis: 200,
   },
 });
 
@@ -32,6 +18,7 @@ class App extends Component {
     super();
     this.state = {
       items: [],
+      selected: null,
     };
   }
   componentDidMount() {
@@ -49,11 +36,28 @@ class App extends Component {
   }
   render() {
     const { classes } = this.props;
-    const { items } = this.state;
+    const { items, selected } = this.state;
 
     return (
       <div className={classNames(classes.app, 'App')}>
-        <Board items={items} />
+        <Legend
+          items={items}
+          onSelect={(evt, _oid) =>
+            this.setState(state => ({
+              selected: state.selected !== _oid ? _oid : null,
+            }))
+          }
+          selected={selected}
+        />
+        <Board
+          items={items}
+          onSelect={(evt, _oid) =>
+            this.setState(state => ({
+              selected: state.selected !== _oid ? _oid : null,
+            }))
+          }
+          selected={selected}
+        />
       </div>
     );
   }
