@@ -23,14 +23,16 @@ const styles = {
     width: `50%`,
   },
   importance: {
+    margin: 0,
     position: 'absolute',
-    bottom: 0 - margin,
+    bottom: -38 - 8,
     right: 0,
   },
   difficulty: {
+    margin: 0,
     position: 'absolute',
-    top: 0,
-    left: 0 - margin - 16,
+    top: 54,
+    left: -100,
     transform: 'rotate(270deg)',
   },
   list: {
@@ -64,31 +66,41 @@ export default withStyles(styles)(({ classes, items }) => {
     <div className={cn(classes.root)}>
       <h1 className={classes.importance}>Importance</h1>
       <h1 className={classes.difficulty}>Difficulty</h1>
-      <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)}><h3>Ignore for Now?</h3></div>
-      <div style={{ top: '50%', left: 0 }} className={cn(classes.quadrant)} ><h3>Improve when Able</h3></div>
-      <div style={{ top: 0, left: '50%' }} className={cn(classes.quadrant)}><h3>Breakdown and Plan</h3></div>
+      <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)}>
+        <h3>Ignore for Now?</h3>
+      </div>
+      <div style={{ top: '50%', left: 0 }} className={cn(classes.quadrant)}>
+        <h3>Improve when Able</h3>
+      </div>
+      <div style={{ top: 0, left: '50%' }} className={cn(classes.quadrant)}>
+        <h3>Breakdown and Plan</h3>
+      </div>
       <div
         style={{
           top: '50%',
           left: '50%',
         }}
         className={cn(classes.quadrant)}
-        >
-      <h3>Quick Wins</h3></div>
+      >
+        <h3>Quick Wins</h3>
+      </div>
       <ul className={cn(classes.list)}>
         {items.map(item => (
-            <li className={classes.listItem} key={item._oid} style={{
-                bottom : `calc((100% / ${maxDifficulty}) * ${item.difficulty})`,
-                left: `calc((100% / ${maxImportance}) * ${item.importance})`,
-                cursor: 'default',
-              }}>
-
-                <div>
-                  <Tooltip title={item.summary}>
-                    <span className={classes.itemText}>{item.title}</span>
-                  </Tooltip>
-                </div>
-            </li>
+          <li
+            className={classes.listItem}
+            key={item._oid}
+            style={{
+              bottom: `calc((100% / ${maxDifficulty}) * ${item.difficulty})`,
+              left: `calc((100% / ${maxImportance}) * ${item.importance})`,
+              cursor: 'default',
+            }}
+          >
+            <div>
+              <Tooltip title={item.summary}>
+                <span className={classes.itemText}>{item.title}</span>
+              </Tooltip>
+            </div>
+          </li>
         ))}
       </ul>
     </div>
