@@ -18,12 +18,25 @@ class Results extends Component {
   }
 
   render() {
-    const { classes, items, onSelect, selected } = this.props;
+    const {
+      classes,
+      items,
+      maxDifficulty,
+      maxImportance,
+      onSelect,
+      selected,
+    } = this.props;
 
     return (
       <div className={cn(classes.app, 'App')}>
         <ItemList items={items} onSelect={onSelect} selected={selected} />
-        <Board items={items} onSelect={onSelect} selected={selected} />
+        <Board
+          items={items}
+          onSelect={onSelect}
+          selected={selected}
+          maxImportance={maxImportance}
+          maxDifficulty={maxDifficulty}
+        />
       </div>
     );
   }

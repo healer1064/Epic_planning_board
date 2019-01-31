@@ -2,42 +2,53 @@ import axios from 'axios';
 import React, { Component, Fragment } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import { keyBy } from 'lodash';
 import { Location, navigate, Router } from '@reach/router';
-import Importance from './Importance';
+import EditDimension from './EditDimension';
 import Results from './Results';
 import './App.css';
 
-const Home = ({ items, selected, onNavigate, onSelect, tabs }) => (
+const Home = ({ items, selected, onNavigate, onSelect, onUpdate, tabs }) => (
   <Fragment>
     <Location>
-      {({ location }) => {
-        console.log(location);
-        return (
-          <Tabs
-            value={tabs.findIndex(tab => tab.href === location.pathname)}
-            onChange={onNavigate}
-          >
-            {tabs.map(({ href, label }) => (
-              <Tab key={href} label={label} />
-            ))}
-          </Tabs>
-        );
-      }}
+      {({ location }) => (
+        <Tabs
+          value={tabs.findIndex(tab => tab.href === location.pathname)}
+          onChange={onNavigate}
+        >
+          {tabs.map(({ href, label }) => (
+            <Tab key={href} label={label} />
+          ))}
+        </Tabs>
+      )}
     </Location>
     <div>
       <Router>
-        <Importance
-          default
+        <EditDimension
           path="/importance"
-          items={items.slice(0)}
+          attribute="importance"
+          items={items.slice(0).map(i => ({ ...i, rated: i.importance > 0 }))}
           onSelect={onSelect}
+          onUpdate={onUpdate('Value')}
           selected={selected}
+          tiers={[100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0]}
+        />
+        <EditDimension
+          path="/difficulty"
+          attribute="difficulty"
+          items={items.slice(0).map(i => ({ ...i, rated: i.difficulty > 0 }))}
+          onSelect={onSelect}
+          onUpdate={onUpdate('Swag')}
+          selected={selected}
+          tiers={[1, 2, 3, 5, 8, 13, 21]}
         />
         <Results
           path="/results"
           items={items}
           onSelect={onSelect}
           selected={selected}
+          maxDifficulty={21}
+          maxImportance={100}
         />
       </Router>
     </div>
@@ -53,20 +64,23 @@ class App extends Component {
       { label: 'Results', href: '/results' },
     ];
     this.state = {
-      items: [],
+      items: {},
       selected: null,
     };
   }
   componentDidMount() {
     axios.get('/api').then(resp =>
       this.setState({
-        items: resp.data[0].map(wi => ({
-          _oid: wi._oid,
-          title: wi.Number,
-          summary: wi.Name,
-          importance: wi.Value || 0,
-          difficulty: wi.Swag || 0,
-        })),
+        items: keyBy(
+          resp.data[0].map(wi => ({
+            _oid: wi._oid,
+            title: wi.Number,
+            summary: wi.Name,
+            importance: parseInt(wi.Value) || 0,
+            difficulty: parseInt(wi.Swag) || 0,
+          })),
+          '_oid',
+        ),
       }),
     );
   }
@@ -81,17 +95,43 @@ class App extends Component {
     }));
   };
 
+  handleUpdate = updateKey => ({ _oid, ...rest }) => {
+    axios
+      .put('/api/update', {
+        updateKey,
+        _oid,
+        updateValue: Object.values(rest)[0],
+      })
+      .then(() =>
+        this.setState(state => ({
+          ...state,
+          items: {
+            ...state.items,
+            [_oid]: {
+              ...state.items[_oid],
+              ...rest,
+            },
+          },
+        })),
+      )
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   render() {
     const { items, selected } = this.state;
+    const itemArray = Object.values(items);
 
     return (
       <Router>
         <Home
           default
-          items={items}
+          items={itemArray}
           selected={selected}
           onNavigate={this.handleNavigateTab}
           onSelect={this.handleSelection}
+          onUpdate={this.handleUpdate}
           tabs={this.tabs}
         />
       </Router>

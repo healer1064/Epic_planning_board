@@ -15,6 +15,9 @@ const styles = {
   selected: {
     background: 'rgba(190, 144, 212, .5)',
   },
+  rated: {
+    color: 'gray',
+  },
 };
 
 export default withStyles(styles)(({ classes, items, onSelect, selected }) => (
@@ -25,6 +28,7 @@ export default withStyles(styles)(({ classes, items, onSelect, selected }) => (
         className={cn(
           classes.listItem,
           selected === item._oid && classes.selected,
+          item.rated && classes.rated,
         )}
         onClick={evt => onSelect(evt, item._oid)}
       >

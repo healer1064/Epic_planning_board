@@ -3,6 +3,8 @@ const sdk = require('v1sdk');
 const axios = require('axios');
 
 const server = new express();
+server.use(express.json());
+
 const token = process.env.TOKEN;
 const v1 = sdk
   .axiosConnector(axios)(sdk.default)(
@@ -25,6 +27,17 @@ server.get('/api', (req, res) => {
     .catch(e => {
       console.log(e);
       res.send('error');
+    });
+});
+
+server.put('/api/update', (req, res) => {
+  v1.update(req.body._oid, { [req.body.updateKey]: req.body.updateValue })
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch(error => {
+      console.log(error);
+      res.sendStatus(500);
     });
 });
 

@@ -1,10 +1,10 @@
 import React from 'react';
-import Tooltip from '@material-ui/core/Tooltip';
-import { last } from 'lodash';
+import { first } from 'lodash';
+import Item from './Item';
 
-const RatingBoard = ({ items, tiers }) => {
-  const orderedTiers = tiers.sort((a, b) => a - b);
-  const max = last(orderedTiers);
+const RatingBoard = ({ children, items, onSelect, selected, tiers }) => {
+  const orderedTiers = tiers.sort((a, b) => b - a);
+  const max = first(orderedTiers);
 
   return (
     <ol
@@ -13,45 +13,55 @@ const RatingBoard = ({ items, tiers }) => {
         flex: 1,
         height: `calc(100vh - ${48 + 18}px)`,
         borderTop: '1px solid gray',
+        borderBottom: '1px solid gray',
       }}
+      onClick={evt => onSelect(evt, null)}
     >
       {orderedTiers.map((tier, index, list) => {
         return (
           <li
             key={tier}
             style={{
-              borderBottom: '1px solid lightgray',
+              alignItems: 'flex-end',
+              borderBottom: index === 0 ? 'none' : '1px solid lightgray',
               display: 'flex',
-              height: `calc((((100% - 1px) / ${max}) * ${tier}) - (${
+              height:
                 index === 0
-                  ? '0px'
-                  : `((100% - 1px) / ${max}) * ${list[index - 1]}`
-              })`,
+                  ? 0
+                  : `calc((((100% - 1px) / ${max}) * ${list[index - 1] -
+                      tier}))`,
+
+              position: index === 0 ? 'absolute' : 'unset',
             }}
           >
             <span style={{ alignSelf: 'flex-end' }}>{tier}</span>
-            <ul style={{ display: 'flex', flexDirection: 'column' }}>
+            <ul
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               {items
                 .filter(
-                  i =>
-                    i.value > (index === 0 ? 0 : list[index - 1]) &&
-                    i.value < tier,
+                  item =>
+                    item.value < (index === 0 ? max : list[index - 1]) &&
+                    item.value >= tier,
                 )
-                .map(i => (
+                .map(item => (
                   <li
                     style={{
-                      padding: 2,
                       listStyle: 'none',
-                      cursor: 'pointer',
                       display: 'inline-block',
-                      borderRadius: 6,
-                      background: 'rgba(190, 144, 212, .5)',
-                      border: '1px solid rgba(115, 101, 152, 1)',
                     }}
+                    key={item._oid}
                   >
-                    <Tooltip title={i.value}>
-                      <span>{i.title}</span>
-                    </Tooltip>
+                    <Item
+                      {...item}
+                      selected={selected === item._oid}
+                      onSelect={onSelect}
+                    >
+                      {close => children(item, close)}
+                    </Item>
                   </li>
                 ))}
             </ul>
