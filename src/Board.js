@@ -12,8 +12,11 @@ const styles = {
     position: 'relative',
     borderLeft: '1px solid black',
     borderBottom: '1px solid black',
-    height: `calc(100vh - ${margin * 2}px)`,
-    width: `calc(100vw - ${margin * 2}px)`,
+    flex: 1,
+    height: `calc(100vh - ${margin * 2 + 48}px)`,
+  },
+  heading: {
+    margin: '1em',
   },
   quadrant: {
     borderRight: '1px solid lightgray',
@@ -64,7 +67,6 @@ const styles = {
   },
   itemText: {
     display: 'block',
-
     padding: 2,
   },
 };
@@ -78,13 +80,13 @@ export default withStyles(styles)(({ classes, items, onSelect, selected }) => {
       <h1 className={classes.importance}>Importance</h1>
       <h1 className={classes.difficulty}>Difficulty</h1>
       <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)}>
-        <h3>Ignore for Now?</h3>
+        <h3 className={classes.heading}>Ignore for Now?</h3>
       </div>
       <div style={{ top: '50%', left: 0 }} className={cn(classes.quadrant)}>
-        <h3>Improve when Able</h3>
+        <h3 className={classes.heading}>Improve when Able</h3>
       </div>
       <div style={{ top: 0, left: '50%' }} className={cn(classes.quadrant)}>
-        <h3>Breakdown and Plan</h3>
+        <h3 className={classes.heading}>Breakdown and Plan</h3>
       </div>
       <div
         style={{
@@ -93,7 +95,7 @@ export default withStyles(styles)(({ classes, items, onSelect, selected }) => {
         }}
         className={cn(classes.quadrant)}
       >
-        <h3>Quick Wins</h3>
+        <h3 className={classes.heading}>Quick Wins</h3>
       </div>
       <ul className={cn(classes.list)}>
         {items.map(item => (

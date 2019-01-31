@@ -2,7 +2,7 @@ import cn from 'classnames';
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Board from './Board';
-import Legend from './Legend';
+import ItemList from './ItemList';
 
 const styles = () => ({
   app: {
@@ -14,35 +14,16 @@ const styles = () => ({
 class Results extends Component {
   constructor(props) {
     super();
-    this.state = {
-      selected: null,
-    };
+    this.state = {};
   }
 
   render() {
-    const { classes, items } = this.props;
-    const { selected } = this.state;
+    const { classes, items, onSelect, selected } = this.props;
 
     return (
       <div className={cn(classes.app, 'App')}>
-        <Legend
-          items={items}
-          onSelect={(evt, _oid) =>
-            this.setState(state => ({
-              selected: state.selected !== _oid ? _oid : null,
-            }))
-          }
-          selected={selected}
-        />
-        <Board
-          items={items}
-          onSelect={(evt, _oid) =>
-            this.setState(state => ({
-              selected: state.selected !== _oid ? _oid : null,
-            }))
-          }
-          selected={selected}
-        />
+        <ItemList items={items} onSelect={onSelect} selected={selected} />
+        <Board items={items} onSelect={onSelect} selected={selected} />
       </div>
     );
   }

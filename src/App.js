@@ -1,25 +1,61 @@
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { navigate, Router } from '@reach/router';
+import { Location, navigate, Router } from '@reach/router';
 import Importance from './Importance';
 import Results from './Results';
 import './App.css';
 
+const Home = ({ items, selected, onNavigate, onSelect, tabs }) => (
+  <Fragment>
+    <Location>
+      {({ location }) => {
+        console.log(location);
+        return (
+          <Tabs
+            value={tabs.findIndex(tab => tab.href === location.pathname)}
+            onChange={onNavigate}
+          >
+            {tabs.map(({ href, label }) => (
+              <Tab key={href} label={label} />
+            ))}
+          </Tabs>
+        );
+      }}
+    </Location>
+    <div>
+      <Router>
+        <Importance
+          default
+          path="/importance"
+          items={items.slice(0)}
+          onSelect={onSelect}
+          selected={selected}
+        />
+        <Results
+          path="/results"
+          items={items}
+          onSelect={onSelect}
+          selected={selected}
+        />
+      </Router>
+    </div>
+  </Fragment>
+);
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      items: [],
-      selected: null,
-      tabIndex: 0,
-    };
     this.tabs = [
       { label: 'Rate Importance', href: '/importance' },
       { label: 'Rate Difficulty', href: '/difficulty' },
       { label: 'Results', href: '/results' },
     ];
+    this.state = {
+      items: [],
+      selected: null,
+    };
   }
   componentDidMount() {
     axios.get('/api').then(resp =>
@@ -36,28 +72,29 @@ class App extends Component {
   }
 
   handleNavigateTab = (evt, tabIndex) => {
-    this.setState({ tabIndex }, () => {
-      navigate(this.tabs[tabIndex].href);
-    });
+    navigate(this.tabs[tabIndex].href);
+  };
+
+  handleSelection = (evt, selected) => {
+    this.setState(state => ({
+      selected: state.selected !== selected ? selected : null,
+    }));
   };
 
   render() {
-    const { items, tabIndex } = this.state;
+    const { items, selected } = this.state;
 
     return (
-      <div>
-        <Tabs value={tabIndex} onChange={this.handleNavigateTab}>
-          {this.tabs.map(({ href, label }) => (
-            <Tab key={href} label={label} />
-          ))}
-        </Tabs>
-        <div>
-          <Router>
-            <Importance path="/importance" items={items} />
-            <Results path="/results" items={items} />
-          </Router>
-        </div>
-      </div>
+      <Router>
+        <Home
+          default
+          items={items}
+          selected={selected}
+          onNavigate={this.handleNavigateTab}
+          onSelect={this.handleSelection}
+          tabs={this.tabs}
+        />
+      </Router>
     );
   }
 }
