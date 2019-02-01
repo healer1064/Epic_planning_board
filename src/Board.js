@@ -91,10 +91,7 @@ export default withStyles(styles)(
             <li
               className={cn(
                 classes.listItem,
-                item._oid === selected && classes.selected,
-                selected !== null &&
-                  item._oid !== selected &&
-                  classes.notSelected,
+                selected.includes(item._oid) && classes.selected,
               )}
               key={item._oid}
               style={{
@@ -107,7 +104,7 @@ export default withStyles(styles)(
                 value={`${item.summary} (${item.importance}, ${
                   item.difficulty
                 })`}
-                selected={selected === item._oid}
+                selected={selected.includes(item._oid)}
                 onSelect={onSelect}
               />
             </li>

@@ -65,7 +65,7 @@ class App extends Component {
     ];
     this.state = {
       items: {},
-      selected: null,
+      selected: [],
     };
   }
   componentDidMount() {
@@ -91,7 +91,12 @@ class App extends Component {
 
   handleSelection = (evt, selected) => {
     this.setState(state => ({
-      selected: state.selected !== selected ? selected : null,
+      selected:
+        selected === null
+          ? []
+          : state.selected.includes(selected)
+          ? state.selected.filter(item => item !== selected)
+          : state.selected.concat([selected]),
     }));
   };
 

@@ -27,7 +27,7 @@ export default withStyles(styles)(({ classes, items, onSelect, selected }) => (
         key={item.title}
         className={cn(
           classes.listItem,
-          selected === item._oid && classes.selected,
+          selected.includes(item._oid) && classes.selected,
           item.rated && classes.rated,
         )}
         onClick={evt => onSelect(evt, item._oid)}

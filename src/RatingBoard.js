@@ -64,13 +64,13 @@ const RatingBoard = ({ children, items, onSelect, selected, tiers }) => {
                           index - 1
                         ] - tier}) * ${fromBottom}) + 24px)`,
                         left: `calc(78px * ${itemIndex})`,
-                        zIndex: selected === item._oid ? 1000 : 1,
+                        zIndex: selected.includes(item._oid) ? 1000 : 1,
                       }}
                       key={item._oid}
                     >
                       <Item
                         {...item}
-                        selected={selected === item._oid}
+                        selected={selected.includes(item._oid)}
                         onSelect={onSelect}
                       >
                         {close => children(item, close)}
