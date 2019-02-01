@@ -1,7 +1,10 @@
+import AppBar from '@material-ui/core/AppBar';
 import axios from 'axios';
+import Button from '@material-ui/core/Button';
 import React, { Component, Fragment } from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Toolbar from '@material-ui/core/Toolbar';
 import { keyBy } from 'lodash';
 import { Location, navigate, Router } from '@reach/router';
 import EditDimension from './EditDimension';
@@ -12,14 +15,27 @@ const Home = ({ items, selected, onNavigate, onSelect, onUpdate, tabs }) => (
   <Fragment>
     <Location>
       {({ location }) => (
-        <Tabs
-          value={tabs.findIndex(tab => tab.href === location.pathname)}
-          onChange={onNavigate}
-        >
-          {tabs.map(({ href, label }) => (
-            <Tab key={href} label={label} />
-          ))}
-        </Tabs>
+        <AppBar position="static">
+          <Toolbar>
+            <div style={{ flexGrow: 1 }}>
+              <Tabs
+                value={tabs.findIndex(tab => tab.href === location.pathname)}
+                onChange={onNavigate}
+              >
+                {tabs.map(({ href, label }) => (
+                  <Tab key={href} label={label} />
+                ))}
+              </Tabs>
+            </div>
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={evt => onSelect(evt, null)}
+            >
+              Clear Selection
+            </Button>
+          </Toolbar>
+        </AppBar>
       )}
     </Location>
     <div>

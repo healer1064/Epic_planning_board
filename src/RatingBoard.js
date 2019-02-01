@@ -11,7 +11,7 @@ const RatingBoard = ({ children, items, onSelect, selected, tiers }) => {
       style={{
         margin: 0,
         flex: 1,
-        height: `calc(100vh - ${48 + 18}px)`,
+        height: `calc(100vh - ${72 + 18}px)`,
         borderTop: '1px solid gray',
         borderBottom: '1px solid gray',
       }}

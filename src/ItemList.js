@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
   list: {
-    height: 'calc(100vh - 80px)',
+    height: 'calc(100vh - 104px)',
     overflowY: 'scroll',
   },
   listItem: {

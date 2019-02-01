@@ -12,7 +12,7 @@ const styles = {
     borderLeft: '1px solid black',
     borderBottom: '1px solid black',
     flex: 1,
-    height: `calc(100vh - ${margin * 2 + 48}px)`,
+    height: `calc(100vh - ${margin * 2 + 72}px)`,
   },
   heading: {
     margin: '1em',
@@ -65,18 +65,63 @@ const styles = {
 export default withStyles(styles)(
   ({ classes, items, maxDifficulty, maxImportance, onSelect, selected }) => {
     return (
-      <div className={cn(classes.root)} onClick={evt => onSelect(evt, null)}>
+      <div className={cn(classes.root)}>
         <h1 className={classes.importance}>Importance</h1>
         <h1 className={classes.difficulty}>Difficulty</h1>
         <div style={{ top: 0, left: 0 }} className={cn(classes.quadrant)}>
           <h3 className={classes.heading}>Ignore for Now?</h3>
         </div>
+        <div
+          style={{ top: 0, left: 0, zIndex: 2 }}
+          className={cn(classes.quadrant)}
+          onClick={evt => {
+            evt.stopPropagation();
+            onSelect(null, null);
+            items
+              .filter(
+                item =>
+                  item.importance <= maxImportance / 2 &&
+                  item.difficulty >= maxDifficulty / 2,
+              )
+              .forEach(item => onSelect(null, item._oid));
+          }}
+        />
         <div style={{ top: '50%', left: 0 }} className={cn(classes.quadrant)}>
           <h3 className={classes.heading}>Improve when Able</h3>
         </div>
+        <div
+          style={{ top: '50%', left: 0, zIndex: 2 }}
+          className={cn(classes.quadrant)}
+          onClick={evt => {
+            evt.stopPropagation();
+            onSelect(null, null);
+            items
+              .filter(
+                item =>
+                  item.importance <= maxImportance / 2 &&
+                  item.difficulty <= maxDifficulty / 2,
+              )
+              .forEach(item => onSelect(null, item._oid));
+          }}
+        />
         <div style={{ top: 0, left: '50%' }} className={cn(classes.quadrant)}>
           <h3 className={classes.heading}>Breakdown and Plan</h3>
         </div>
+        <div
+          style={{ top: 0, left: '50%', zIndex: 2 }}
+          className={cn(classes.quadrant)}
+          onClick={evt => {
+            evt.stopPropagation();
+            onSelect(null, null);
+            items
+              .filter(
+                item =>
+                  item.importance >= maxImportance / 2 &&
+                  item.difficulty >= maxDifficulty / 2,
+              )
+              .forEach(item => onSelect(null, item._oid));
+          }}
+        />
         <div
           style={{
             top: '50%',
@@ -86,6 +131,25 @@ export default withStyles(styles)(
         >
           <h3 className={classes.heading}>Quick Wins</h3>
         </div>
+        <div
+          style={{
+            top: '50%',
+            left: '50%',
+            zIndex: 2,
+          }}
+          onClick={evt => {
+            evt.stopPropagation();
+            onSelect(null, null);
+            items
+              .filter(
+                item =>
+                  item.importance >= maxImportance / 2 &&
+                  item.difficulty <= maxDifficulty / 2,
+              )
+              .forEach(item => onSelect(null, item._oid));
+          }}
+          className={cn(classes.quadrant)}
+        />
         <ul className={cn(classes.list)}>
           {items.map(item => (
             <li
@@ -97,6 +161,7 @@ export default withStyles(styles)(
               style={{
                 bottom: `calc((100% / ${maxDifficulty}) * ${item.difficulty})`,
                 left: `calc((100% / ${maxImportance}) * ${item.importance})`,
+                zIndex: 3,
               }}
             >
               <Item
