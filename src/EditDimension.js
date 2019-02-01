@@ -1,16 +1,16 @@
-import cn from 'classnames';
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import ItemList from './ItemList';
-import RatingBoard from './RatingBoard';
-import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
+import cn from "classnames";
+import React from "react";
+import { withStyles } from "@material-ui/core/styles";
+import ItemList from "./ItemList";
+import RatingBoard from "./RatingBoard";
+import Paper from "@material-ui/core/Paper";
+import TextField from "@material-ui/core/TextField";
 
 const styles = () => ({
   app: {
-    overflow: 'hidden',
-    display: 'flex',
-  },
+    overflow: "hidden",
+    display: "flex"
+  }
 });
 
 const EditDimension = ({
@@ -20,9 +20,9 @@ const EditDimension = ({
   onSelect,
   onUpdate,
   selected,
-  tiers,
+  tiers
 }) => (
-  <div className={cn(classes.app, 'App')}>
+  <div className={cn(classes.app, "App")}>
     <ItemList
       items={items.sort((a, b) => b[attribute] - a[attribute])}
       onSelect={onSelect}
@@ -30,7 +30,6 @@ const EditDimension = ({
     />
     <RatingBoard
       items={items
-        .filter(i => i[attribute] > 0)
         .map(i => ({ ...i, value: i[attribute] }))
         .sort((a, b) => b.value - a.value)}
       tiers={tiers}
@@ -44,13 +43,13 @@ const EditDimension = ({
             <TextField
               defaultValue={item[attribute]}
               onKeyDown={evt => {
-                if (evt.key === 'Enter') {
+                if (evt.key === "Enter") {
                   onUpdate({
                     _oid: item._oid,
-                    [attribute]: parseInt(evt.target.value),
+                    [attribute]: parseInt(evt.target.value)
                   });
                   close();
-                } else if (evt.key === 'Escape') {
+                } else if (evt.key === "Escape") {
                   close();
                 }
               }}

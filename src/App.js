@@ -1,15 +1,15 @@
-import AppBar from '@material-ui/core/AppBar';
-import axios from 'axios';
-import Button from '@material-ui/core/Button';
-import React, { Component, Fragment } from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Toolbar from '@material-ui/core/Toolbar';
-import { keyBy } from 'lodash';
-import { Location, navigate, Router } from '@reach/router';
-import EditDimension from './EditDimension';
-import Results from './Results';
-import './App.css';
+import AppBar from "@material-ui/core/AppBar";
+import axios from "axios";
+import Button from "@material-ui/core/Button";
+import React, { Component, Fragment } from "react";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Toolbar from "@material-ui/core/Toolbar";
+import { keyBy } from "lodash";
+import { Location, navigate, Router } from "@reach/router";
+import EditDimension from "./EditDimension";
+import Results from "./Results";
+import "./App.css";
 
 const Home = ({ items, selected, onNavigate, onSelect, onUpdate, tabs }) => (
   <Fragment>
@@ -45,7 +45,7 @@ const Home = ({ items, selected, onNavigate, onSelect, onUpdate, tabs }) => (
           attribute="importance"
           items={items.slice(0).map(i => ({ ...i, rated: i.importance > 0 }))}
           onSelect={onSelect}
-          onUpdate={onUpdate('Value')}
+          onUpdate={onUpdate("Value")}
           selected={selected}
           tiers={[100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0]}
         />
@@ -54,9 +54,9 @@ const Home = ({ items, selected, onNavigate, onSelect, onUpdate, tabs }) => (
           attribute="difficulty"
           items={items.slice(0).map(i => ({ ...i, rated: i.difficulty > 0 }))}
           onSelect={onSelect}
-          onUpdate={onUpdate('Swag')}
+          onUpdate={onUpdate("Swag")}
           selected={selected}
-          tiers={[1, 2, 3, 5, 8, 13, 21]}
+          tiers={[0, 1, 2, 3, 5, 8, 13, 21]}
         />
         <Results
           path="/results"
@@ -75,17 +75,17 @@ class App extends Component {
   constructor() {
     super();
     this.tabs = [
-      { label: 'Rate Importance', href: '/importance' },
-      { label: 'Rate Difficulty', href: '/difficulty' },
-      { label: 'Results', href: '/results' },
+      { label: "Rate Importance", href: "/importance" },
+      { label: "Rate Difficulty", href: "/difficulty" },
+      { label: "Results", href: "/results" }
     ];
     this.state = {
       items: {},
-      selected: [],
+      selected: []
     };
   }
   componentDidMount() {
-    axios.get('/api').then(resp =>
+    axios.get("/api").then(resp =>
       this.setState({
         items: keyBy(
           resp.data[0].map(wi => ({
@@ -93,11 +93,11 @@ class App extends Component {
             title: wi.Number,
             summary: wi.Name,
             importance: parseInt(wi.Value) || 0,
-            difficulty: parseInt(wi.Swag) || 0,
+            difficulty: parseInt(wi.Swag) || 0
           })),
-          '_oid',
-        ),
-      }),
+          "_oid"
+        )
+      })
     );
   }
 
@@ -112,16 +112,16 @@ class App extends Component {
           ? []
           : state.selected.includes(selected)
           ? state.selected.filter(item => item !== selected)
-          : state.selected.concat([selected]),
+          : state.selected.concat([selected])
     }));
   };
 
   handleUpdate = updateKey => ({ _oid, ...rest }) => {
     axios
-      .put('/api/update', {
+      .put("/api/update", {
         updateKey,
         _oid,
-        updateValue: Object.values(rest)[0],
+        updateValue: Object.values(rest)[0]
       })
       .then(() =>
         this.setState(state => ({
@@ -130,10 +130,10 @@ class App extends Component {
             ...state.items,
             [_oid]: {
               ...state.items[_oid],
-              ...rest,
-            },
-          },
-        })),
+              ...rest
+            }
+          }
+        }))
       )
       .catch(error => {
         console.log(error);
